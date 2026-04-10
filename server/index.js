@@ -18,3 +18,7 @@ app.listen(5000, () => {
 mongoose.connect("mongodb+srv://admin:Finance123@cluster0.hngsoga.mongodb.net/?appName=Cluster0")
 .then(() => console.log("DB Connected ✅"))
 .catch(err => console.log(err));
+
+// Routes changes are here
+const userRoutes = require("./routes/userRoutes");
+app.use("/api/users", userRoutes);
