@@ -20,5 +20,7 @@ mongoose.connect("mongodb+srv://admin:Finance123@cluster0.hngsoga.mongodb.net/?a
 .catch(err => console.log(err));
 
 // Routes changes are here
-const userRoutes = require("./routes/userRoutes");
-app.use("/api/users", userRoutes);
+// const userRoutes = require("./routes/userRoutes");
+// app.use("/api/users", userRoutes);
+
+// hiekjevnkejn
