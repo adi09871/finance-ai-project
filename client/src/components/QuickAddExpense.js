@@ -1,22 +1,57 @@
 import React, { useState } from 'react';
 import './QuickAddExpense.css';
 
-function QuickAddExpense() {
+function QuickAddExpense({ onExpenseAdded }) {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('Food');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleAddExpense = () => {
-    if (description && amount) {
-      console.log({
-        description,
-        amount,
-        category,
+  const handleAddExpense = async () => {
+    if (!description || !amount) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('http://localhost:5000/add-expense', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description,
+          amount: parseFloat(amount),
+          category,
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add expense');
+      }
+
+      const newExpense = await response.json();
+      console.log('Expense added:', newExpense);
+
       // Reset form
       setDescription('');
       setAmount('');
       setCategory('Food');
+
+      // Notify parent component to refresh expenses
+      if (onExpenseAdded) {
+        onExpenseAdded();
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error adding expense:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,9 +106,15 @@ function QuickAddExpense() {
         </div>
       </div>
 
-      <button className="add-expense-btn" onClick={handleAddExpense}>
-        <span className="btn-icon">+</span>
-        Add Expense
+      {error && <p className="error-message" style={{color: 'red', marginTop: '10px'}}>{error}</p>}
+
+      <button 
+        className="add-expense-btn" 
+        onClick={handleAddExpense}
+        disabled={loading}
+      >
+        <span className="btn-icon">{loading ? '...' : '+'}</span>
+        {loading ? 'Adding...' : 'Add Expense'}
       </button>
     </div>
   );

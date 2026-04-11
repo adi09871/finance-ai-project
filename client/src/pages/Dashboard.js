@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import StatCard from '../components/StatCard';
 import RecentActivity from '../components/RecentActivity';
@@ -6,6 +6,12 @@ import QuickAddExpense from '../components/QuickAddExpense';
 import './Dashboard.css';
 
 function Dashboard() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleExpenseAdded = () => {
+    // Trigger refresh of RecentActivity
+    setRefreshTrigger(prev => prev + 1);
+  };
   const stats = [
     {
       icon: { emoji: '💰', bgColor: '#e8d5f2' },
@@ -46,10 +52,10 @@ function Dashboard() {
 
         <div className="dashboard-content">
           <div className="content-left">
-            <RecentActivity />
+            <RecentActivity refreshTrigger={refreshTrigger} />
           </div>
           <div className="content-right">
-            <QuickAddExpense />
+            <QuickAddExpense onExpenseAdded={handleExpenseAdded} />
           </div>
         </div>
       </div>
